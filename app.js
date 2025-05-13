@@ -8,6 +8,7 @@ const swaggerSpec = require('./config/swagger');
 
 var indexRouter = require('./routes/index');
 var catwayRouter = require('./routes/catway');
+var dashboardRouter = require('./routes/dashboard');
 const mongodb = require('./db/mongo');
 
 mongodb.initClientDbConnection();
@@ -33,6 +34,7 @@ app.get('/', function(req, res, next) {
 
 app.use('/', indexRouter);
 app.use('/api/catways', catwayRouter);
+app.use('/dashboard', dashboardRouter);
 
 
 app.use('/docs', express.static(path.join(__dirname, 'docs')));

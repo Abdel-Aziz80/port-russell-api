@@ -1,35 +1,157 @@
-// routes/catway.js
+//routes/catway.js
 
-// Importation des modules nécessaires
 var express = require('express');
 var router = express.Router();
 
-// Importation du controllers de gestion des catways
 const catways = require('../controllers/catways');
-
-// Middleware d'authentification
 const auth = require('../middleware/auth');
 
-// Route pour récupérer tous les catways
-// Cette route est protégée par un token JWT
+/**
+ * @swagger
+ * tags:
+ *   name: Catways
+ *   description: API de gestion des catways
+ */
+
+/**
+ * @swagger
+ * /catways:
+ *   get:
+ *     summary: Récupérer tous les catways
+ *     tags: [Catways]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Liste des catways récupérée avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *       401:
+ *         description: Non autorisé
+ */
 router.get('/', auth.checkJWT, catways.getAll);
 
-// Route pour récupérer un catway par son ID
-// Cette route nécessite également un token JWT valide
+/**
+ * @swagger
+ * /catways/{id}:
+ *   get:
+ *     summary: Récupérer un catway par ID
+ *     tags: [Catways]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID du catway
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Catway trouvé
+ *       404:
+ *         description: Catway non trouvé
+ *       401:
+ *         description: Non autorisé
+ */
 router.get('/:id', auth.checkJWT, catways.getById);
 
-// Route pour ajouter un nouveau catway
-// Cette route nécessite un token JWT valide pour l'authentification
+/**
+ * @swagger
+ * /catways:
+ *   post:
+ *     summary: Ajouter un nouveau catway
+ *     tags: [Catways]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: Quai Alpha
+ *               location:
+ *                 type: string
+ *                 example: Zone Nord
+ *     responses:
+ *       201:
+ *         description: Catway ajouté
+ *       400:
+ *         description: Requête invalide
+ *       401:
+ *         description: Non autorisé
+ */
 router.post('/', auth.checkJWT, catways.add);
 
-// Route pour mettre à jour un catway existant
-// Cette route est protégée par un token JWT
+/**
+ * @swagger
+ * /catways/{id}:
+ *   patch:
+ *     summary: Mettre à jour un catway
+ *     tags: [Catways]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID du catway
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: Quai Bravo
+ *               location:
+ *                 type: string
+ *                 example: Zone Sud
+ *     responses:
+ *       200:
+ *         description: Catway mis à jour
+ *       404:
+ *         description: Catway non trouvé
+ *       401:
+ *         description: Non autorisé
+ */
 router.patch('/:id', auth.checkJWT, catways.update);
 
-// Route pour supprimer un catway
-// Cette route est protégée par un token JWT
+/**
+ * @swagger
+ * /catways/{id}:
+ *   delete:
+ *     summary: Supprimer un catway
+ *     tags: [Catways]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID du catway
+ *         schema:
+ *           type: string
+ *     responses:
+ *       204:
+ *         description: Supprimé avec succès
+ *       404:
+ *         description: Catway non trouvé
+ *       401:
+ *         description: Non autorisé
+ */
 router.delete('/:id', auth.checkJWT, catways.delete);
-
-// Export du module pour l'utiliser dans d'autres fichiers
 
 module.exports = router;
