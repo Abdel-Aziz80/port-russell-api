@@ -1,0 +1,24 @@
+//- //views/reservationInfo.pug
+
+doctype html
+html
+  head
+    title= title
+body 
+    h1 Information sur la réservation.
+
+    table
+        tr
+            th Id de réservation
+            th Numéro du quai
+            th Nom du client
+            th Nom du bâteau
+            th Date d'entrée
+            th Date de sortie
+        tr
+            td= reservation.reservationId
+            td= reservation.catwayNumber
+            td= reservation.clientName
+            td= reservation.boatName
+            td= reservation.checkIn
+            td= reservation.checkOut
