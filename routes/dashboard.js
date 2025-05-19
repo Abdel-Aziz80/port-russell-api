@@ -4,6 +4,23 @@ var router = express.Router();
 const service = require('../services/dashboard');
 const auth = require('../middleware/auth');
 
+console.log('Service functions:', service);
+console.log('Auth middleware:', auth);
+
+// Log pour une fonction spécifique
+console.log('Dashboard function:', service.dashboard);
+console.log('UpdateUser function:', service.updateUser);
+console.log('UpdateUserById function:', service.updateUserById);
+console.log('DeleteUser function:', service.deleteUser);
+console.log('GetCatwayById function:', service.getCatwayById);
+console.log('UpdateCatwayById function:', service.updateCatwayById);
+console.log('DeleteCatway function:', service.deleteCatway);
+console.log('AddReservation function:', service.addReservation);
+console.log('GetReservationInfo function:', service.getReservationInfo);
+console.log('DeleteReservation function:', service.deleteReservation);
+
+
+
 /**
  * @swagger
  * tags:
@@ -82,7 +99,7 @@ router.post('/updateUser/:id', auth.checkJWT, service.updateUserById);
 /**
  * @swagger
  * /dashboard/deleteUser:
- *   get:
+ *   delete:
  *     summary: Supprimer un utilisateur
  *     tags: [Dashboard]
  *     security:
@@ -95,9 +112,9 @@ router.delete('/deleteUser', auth.checkJWT, service.deleteUser);
 
 /**
  * @swagger
- * /dashboard/updateCatway/{id}:
+ * /dashboard/getCatway/{id}:
  *   get:
- *     summary: Charger les données d’un catway pour modification
+ *     summary: Récupérer les informations d'un catway
  *     tags: [Dashboard]
  *     security:
  *       - bearerAuth: []
@@ -144,7 +161,7 @@ router.post('/updateCatway/:id', auth.checkJWT, service.updateCatwayById);
 /**
  * @swagger
  * /dashboard/deleteCatway/{id}:
- *   get:
+ *   delete:
  *     summary: Supprimer un catway par ID
  *     tags: [Dashboard]
  *     security:
@@ -212,7 +229,7 @@ router.get('/getReservationInfo/:id', auth.checkJWT, service.getReservationInfo)
 /**
  * @swagger
  * /dashboard/deleteReservation/{id}:
- *   get:
+ *   delete:
  *     summary: Supprimer une réservation
  *     tags: [Dashboard]
  *     security:

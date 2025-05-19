@@ -1,6 +1,7 @@
 // controllers/catways.js
 const Catway = require('../models/catway');
 
+
 exports.getAll = async (req, res) => {
   try {
     const catways = await Catway.find();
@@ -20,15 +21,18 @@ exports.getById = async (req, res) => {
   }
 };
 
-exports.add = async (req, res) => {
-  try {
-    const newCatway = new Catway(req.body);
-    await newCatway.save();
-    res.status(201).json(newCatway);
-  } catch (err) {
-    res.status(500).json({ error: 'Erreur lors de l\'ajout' });
+exports.add = [
+  async (req, res) => {
+    try {
+      const newCatway = new Catway(req.body);
+      await newCatway.save();
+      res.status(201).json(newCatway);
+    } catch (err) {
+      res.status(500).json({ error: 'Erreur lors de l\'ajout' });
+    }
   }
-};
+];
+
 
 exports.update = async (req, res) => {
   try {

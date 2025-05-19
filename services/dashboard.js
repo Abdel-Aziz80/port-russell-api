@@ -1,10 +1,10 @@
 // services/dashboard
 
-const { body, validationResult } = require('express-validator');
+import { body, validationResult } from 'express-validator';
 
-const User = require('../models/user');
-const Catway = require('../models/catway');
-const Reservation = require('../models/reservation');
+import User from '../models/user.js';
+import Catway from '../models/catway.js';
+import Reservation from '../models/reservation.js';
 
 /**
  * Affiche le tableau de bord avec les utilisateurs, catways et réservations.
@@ -14,7 +14,8 @@ const Reservation = require('../models/reservation');
  * @param {Object} res - L'objet de réponse HTTP. Rend la vue 'dashboard' avec les données nécessaires.
  * @param {Function} next - La fonction middleware suivante.
  */
-exports.dashboard = async (req, res, next) => {
+
+export async function dashboard(req, res, next)  {
     try {
         const users = await User.find({});
         const catways = await Catway.find({});
@@ -40,7 +41,7 @@ exports.dashboard = async (req, res, next) => {
  * @param {Object} res - L'objet de réponse HTTP. Rend la vue 'updateUser'.
  * @param {Function} next - La fonction middleware suivante.
  */
-exports.updateUser = async (req, res, next) => {
+export async function updateUser(req, res, next) {
     try {
         const userId = req.body.user;
         const user = await User.findById(userId);
@@ -62,7 +63,7 @@ exports.updateUser = async (req, res, next) => {
  * @param {Object} res - L'objet de réponse HTTP. Redirige vers le tableau de bord si la mise à jour est réussie.
  * @param {Function} next - La fonction middleware suivante.
  */
-exports.updateUserById = async (req, res, next) => {
+export async function updateUserById(req, res, next) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
@@ -117,7 +118,7 @@ exports.updateUserById = async (req, res, next) => {
  * @param {Object} res - L'objet de réponse HTTP. Redirige vers le tableau de bord après suppression.
  * @param {Function} next - La fonction middleware suivante.
  */
-exports.deleteUser = async (req, res, next) => {
+export async function deleteUser(req, res, next) {
     try {
         const userId = req.query.user;
         const token = req.cookies.token;
@@ -159,7 +160,50 @@ exports.deleteUser = async (req, res, next) => {
  * @param {Object} res - L'objet de réponse HTTP. Rend la vue 'updateCatway'.
  * @param {Function} next - La fonction middleware suivante.
  */
-exports.updateCatway = async (req, res, next) => {
+
+export const getCatway = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/cataway`, RequestOption);
+    return response.data;
+  } catch (error) {
+    console.error("Erreur lors de la récupération des données Cataway :", error);
+    throw error;
+  }
+};
+
+/**
+ * Affiche le formulaire de mise à jour pour un catway donné.
+ * @function
+ * @async
+ * @param {Object} req - L'objet de requête HTTP. Contient l'ID du catway dans les paramètres.
+ * @param {Object} res - L'objet de réponse HTTP. Rend la vue 'updateCatway'.
+ * @param {Function} next - La fonction middleware suivante.
+ */
+
+export async function getCatwayById(req, res, next) {
+    try {
+        const catwayId = req.params.id;
+        const catway = await Catway.findById(catwayId);
+
+        return res.render('updateCatway', {
+            title: "Update Catway",
+            catway
+        });
+    } catch (error) {
+        return res.status(500).json(error);
+    }
+};
+
+
+/**
+ * Affiche le formulaire de mise à jour pour un catway donné.
+ * @function
+ * @async
+ * @param {Object} req - L'objet de requête HTTP. Contient l'ID du catway dans les paramètres.
+ * @param {Object} res - L'objet de réponse HTTP. Rend la vue 'updateCatway'.
+ * @param {Function} next - La fonction middleware suivante.
+ */
+export async function updateCatway(req, res, next) {
     try {
         const catwayId = req.params.id;
         const catway = await Catway.findById(catwayId);
@@ -181,7 +225,7 @@ exports.updateCatway = async (req, res, next) => {
  * @param {Object} res - L'objet de réponse HTTP. Redirige vers le tableau de bord après modification.
  * @param {Function} next - La fonction middleware suivante.
  */
-exports.updateCatwayById = async (req, res, next) => {
+export async function updateCatwayById (req, res, next) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
@@ -234,7 +278,7 @@ exports.updateCatwayById = async (req, res, next) => {
  * @param {Object} res - L'objet de réponse HTTP. Redirige vers le tableau de bord après suppression.
  * @param {Function} next - La fonction middleware suivante.
  */
-exports.deleteCatway = async (req, res, next) => {
+export async function deleteCatway(req, res, next) {
     try {
         const id = req.params.id;
         const token = req.cookies.token;
@@ -277,7 +321,7 @@ exports.deleteCatway = async (req, res, next) => {
  * @param {Object} res - L'objet de réponse HTTP. Fait appel à la requette d'ajout d'une réservation. 
  * @param {Function} next - La fonction middleware suivante.
  */
-  exports.addReservation = async (req, res, next) => {
+  export async function addReservation(req, res, next) {
     try {
       const catway = JSON.parse(req.body.catwayNumber);
 
@@ -333,7 +377,7 @@ exports.deleteCatway = async (req, res, next) => {
  * @param {Object} res - L'objet de réponse HTTP. Redirige vers la page qui présente les informations d'une réservation.
  * @param {Function} next - La fonction middleware suivante.
  */
-exports.getReservationInfo = async (req, res, next) => {
+export async function getReservationInfo(req, res, next) {
   try {
     const id = req.params.id;
 
@@ -356,7 +400,7 @@ exports.getReservationInfo = async (req, res, next) => {
  * @param {Object} res - L'objet de réponse HTTP. Fait appel à la requette de suppression d'une réservation. 
  * @param {Function} next - La fonction middleware suivante.
  */
-exports.deleteReservation = async (req, res, next) => {
+export async function deleteReservation(req, res, next) {
   try {
       const id = req.params.id;
       const token = req.cookies.token;

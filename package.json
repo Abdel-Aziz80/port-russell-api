@@ -3,9 +3,10 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "env-cmd -f .env/.env node ./bin/www",
+    "start": "npm test && env-cmd -f .env/.env node ./bin/www",
     "dev": "env-cmd -f .env/.env.dev nodemon ./bin/www",
     "prod": "env-cmd -f .env/.env.prod node ./bin/www",
+    "doc": "jsdoc -c jsdoc.json",
     "test": "mocha"
   },
   "dependencies": {
@@ -29,7 +30,9 @@
     "chai": "^5.2.0",
     "env-cmd": "^10.1.0",
     "jsdoc": "^4.0.4",
-    "mocha": "^11.2.2",
-    "nodemon": "^3.1.10"
+    "mocha": "^11.3.0",
+    "nodemon": "^3.1.10",
+    "prettier": "^3.5.3",
+    "sinon": "^20.0.0"
   }
 }
