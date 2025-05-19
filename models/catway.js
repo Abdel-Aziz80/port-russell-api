@@ -1,6 +1,7 @@
 // Importation de mongoose pour pouvoir travailler avec MongoDB et créer des modèles
 const mongoose = require('mongoose');
 
+
 /**
  * Schéma pour la gestion des catways (places dans le port)
  * @module models/catway

@@ -20,7 +20,7 @@ exports.getAll = async (req, res, next) => {
         let catway = await Catway.findById(id);
         
         if (reservation) {
-            return res.render('reservation', { title: 'Réservation', reservation: reservation, catway: catway });
+            return res.render('reservations', { title: 'Réservation', reservation: reservation, catway: catway });
         }
     } catch (error) {
         return res.status(500).json(error);
@@ -36,18 +36,17 @@ exports.getAll = async (req, res, next) => {
  * @param {Function} next - La fonction middleware suivante.
  */
 exports.getById = async (req, res, next) => {
-    const id = req.params.id
-    const idReservation = req.params.idReservation 
+    const id = req.params.id;
+    const idReservation = req.params.idReservation;
 
     try {
         let catway = await Catway.findById(id);
 
         if (catway) {
-            let reservation = await Reservation.findById(idReservation)
-                if (reservation) {
-                    //res.status(200).json(reservation);
-                    return res.render('reservationInfo', { title: 'Information réservation', reservation: reservation, catway: catway })
-                }
+            let reservation = await Reservation.findById(idReservation);
+            if (reservation) {
+                return res.render('reservationInfo', { title: 'Information réservation', reservation: reservation, catway: catway });
+            }
             return res.status(404).json("Aucune réservation trouvé");
         }
 
@@ -55,7 +54,7 @@ exports.getById = async (req, res, next) => {
     } catch (error) {
         return res.status(500).json(error);
     }
-}
+};
 
 /**
  * Ajoute une nouvelle réservation.
