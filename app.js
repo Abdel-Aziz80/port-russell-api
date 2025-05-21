@@ -2,6 +2,7 @@
 const path = require('path');
 require('dotenv').config({ path: path.resolve(__dirname, '.env/.env') });
 
+const mongoose = require('mongoose');
 console.log('URL_MONGO:', process.env.URL_MONGO);
 
 const express = require('express');
@@ -16,8 +17,8 @@ const { checkJWT } = require('./middleware/auth');
 const indexRouter = require('./routes/index');
 const catwayRouter = require('./routes/catway');
 const dashboardRouter = require('./routes/dashboard');
-const loginRouter = require('./routes/login');
-console.log('✔ loginRouter chargé'); 
+const usersAuthRouter = require('./routes/usersAuth');
+console.log('✔ usersAuth routeur chargé'); 
 const mongodb = require('./db/mongo');
 
 const app = express();
@@ -29,12 +30,19 @@ app.use(cors({
     exposedHeaders: ['Authorization'],
     origin: '*'
 }));
+
+
 app.use(logger('dev'));
 app.use(cookieParser());
 
 
-app.use('/login', loginRouter);
+app.use('/users', usersAuthRouter);
+app.post('/login-debug', (req, res) => {
+  res.json({ message: 'debug ok' });
+});
 
+app.set('views', path.join(__dirname, 'views')); // dossier contenant les .pug
+app.set('view engine', 'pug');   
 
 app.use('/api/catways', checkJWT, catwayRouter);
 
@@ -42,9 +50,10 @@ app.use('/api/catways', checkJWT, catwayRouter);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 
-app.get('/', (req, res) => {
+app.get('/',(req, res, next) => {
     res.render('index', { title: 'Port de Russell' });
-});
+  });
+
 
 app.use('/', indexRouter);
 app.use('/dashboard', dashboardRouter);
@@ -55,19 +64,48 @@ app.use((req, res) => {
     res.status(404).json({ name: 'API', version: '1.0', status: 404, message: 'not_found' });
 });
 
-console.log('--- Routes définies ---');
-app._router.stack
-  .filter(r => r.route && r.route.path)
-  .forEach(r => {
-    const methods = Object.keys(r.route.methods).map(m => m.toUpperCase()).join(', ');
-    console.log(methods.padEnd(6), r.route.path);
+function listAllRoutes(app) {
+  const routes = [];
+
+  app._router.stack.forEach(middleware => {
+    if (middleware.route) {
+      // Route directe
+      routes.push({
+        method: Object.keys(middleware.route.methods)[0].toUpperCase(),
+        path: middleware.route.path,
+      });
+    } else if (middleware.name === 'router' && middleware.handle.stack) {
+      // Sous-router
+      middleware.handle.stack.forEach(handler => {
+        if (handler.route) {
+          const basePath = middleware.regexp?.toString()
+            .replace('/^\\', '/')
+            .replace('\\/?(?=\\/|$)/i', '')
+            .replace(/\\\//g, '/')
+            .replace(/\/$/, '');
+          const fullPath = basePath + handler.route.path;
+          routes.push({
+            method: Object.keys(handler.route.methods)[0].toUpperCase(),
+            path: fullPath,
+          });
+        }
+      });
+    }
   });
-console.log('-----------------------');
+
+  console.log('--- Routes détectées ---');
+  routes.forEach(r => console.log(r.method.padEnd(6), r.path));
+  console.log('-------------------------');
+}
+
+listAllRoutes(app);
 
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Serveur démarré sur le port ${PORT}`);
-});
+mongoose.connect(process.env.URL_MONGO)
+  .then(() => console.log('MongoDB connecté'))
+  .catch(err => {
+    console.error('Erreur connexion MongoDB:', err);
+    process.exit(1);
+  });
 
 module.exports = app;

@@ -7,9 +7,12 @@ exports.getAll = async (req, res) => {
     const catways = await Catway.find();
     res.json(catways);
   } catch (err) {
+    console.error('❌ Erreur dans getAll:', err); 
     res.status(500).json({ error: 'Erreur serveur' });
   }
 };
+
+
 
 exports.getById = async (req, res) => {
   try {
