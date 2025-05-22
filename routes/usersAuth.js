@@ -5,11 +5,11 @@ const router = express.Router();
 
 // Route réelle d'authentification
 router.post('/authenticate', (req, res) => {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
 
-  if (username === 'Mouloud' && password === '1234Password') {
+  if (email === 'mitchi28@hotmail.fr' && password === '1234Password') {
     const token = jwt.sign(
-      { user: { username } },
+      { email: { email } },
       process.env.JWT_KEY,
       { expiresIn: '1h' }
     );
